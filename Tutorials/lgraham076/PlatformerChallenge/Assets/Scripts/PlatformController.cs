@@ -2,12 +2,12 @@
 using System.Collections;
 
 public class PlatformController : MonoBehaviour {
-    [HideInInspector] public bool facingRight = true;
-    [HideInInspector] public bool jump = false;
+    public bool facingRight = true;
+    public bool jump = true;
 
     public float moveForce = 365f;
     public float maxSpeed = 5f;
-    public float jumpForce = 100f;
+    public float jumpForce = 1000f;
     public Transform groundCheck;
 
     private bool grounded = false;
@@ -27,4 +27,42 @@ public class PlatformController : MonoBehaviour {
             jump = true;
         }
 	}
+
+    void FixedUpdate()
+    {
+        float h = Input.GetAxis("Horizontal");
+        anim.SetFloat("Speed", Mathf.Abs(h));
+
+        if(h * rgdb.velocity.x < maxSpeed)
+        {
+            rgdb.AddForce(Vector2.right * h * moveForce);
+        }
+        if (Mathf.Abs(rgdb.velocity.x) > maxSpeed)
+        {
+            rgdb.velocity = new Vector2(Mathf.Sign(rgdb.velocity.x) * maxSpeed, rgdb.velocity.y);
+        }
+        if(h > 0 && !facingRight)
+        {
+            Flip();
+        }
+        else if(h < 0 && facingRight)
+        {
+            Flip();
+        }
+
+        if(jump)
+        {
+            anim.SetTrigger("Jump");
+            rgdb.AddForce(new Vector2(0f, jumpForce));
+            jump = false;
+        }
+    }
+
+    void Flip()
+    {
+        facingRight = !facingRight;
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+    }
 }
