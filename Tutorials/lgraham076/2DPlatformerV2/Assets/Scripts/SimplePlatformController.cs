@@ -3,12 +3,13 @@ using System.Collections;
 
 public class SimplePlatformController : MonoBehaviour {
 
-    [HideInInspector] public bool facingRight = true;
-    [HideInInspector] public bool jump = true;
+    private bool facingRight = true;
+    private int jumps = 2;
+    private bool jumpAction = false;
 
-    public float moveForce = 365f;
-    public float maxSpeed = 5f;
-    public float jumpForce = 1000f;
+    private float moveForce = 365f;
+    private float maxSpeed = 5f;
+    private float jumpForce = 750f;
     public Transform groundCheck;
 
     private bool grounded = false;
@@ -25,11 +26,18 @@ public class SimplePlatformController : MonoBehaviour {
 	void Update () {
         grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
 
-        if (Input.GetButtonDown("Jump") && grounded)
+        if(grounded)
         {
-            jump = true;
+            jumps = 2;
         }
-	}
+
+        if (jumps > 0 && Input.GetButtonDown("Jump") && !jumpAction)
+        {
+            jumpAction = true;
+            jumps--;
+        }
+
+    }
 
     void FixedUpdate()
     {
@@ -51,12 +59,14 @@ public class SimplePlatformController : MonoBehaviour {
             Flip();
         }
 
-        if(jump)
+        if(jumpAction)
         {
             anim.SetTrigger("Jump");
             rb2d.AddForce(new Vector2(0f, jumpForce));
-            jump = false;
+            jumpAction = false;
         }
+
+        
     }
 
     void Flip()
