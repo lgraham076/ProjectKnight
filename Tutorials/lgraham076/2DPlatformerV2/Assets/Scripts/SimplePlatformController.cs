@@ -9,7 +9,7 @@ public class SimplePlatformController : MonoBehaviour {
 
     private float moveForce = 365f;
     private float maxSpeed = 5f;
-    private float jumpForce = 750f;
+    private float jumpForce = 575f;
     public Transform groundCheck;
 
     private bool grounded = false;
@@ -65,7 +65,6 @@ public class SimplePlatformController : MonoBehaviour {
             rb2d.AddForce(new Vector2(0f, jumpForce));
             jumpAction = false;
         }
-
         
     }
 
